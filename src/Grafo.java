@@ -46,11 +46,14 @@ public class Grafo {
 	public boolean vis[];
 
 	private int tipoRepresentacao; //MATRIZ ou LISTA
-	private int n; //número de vértices
-	private int e; //número de arestas
+	private int n; //n��mero de v��rtices
+	private int e; //n��mero de arestas
 
 	int getNumeroVertices() {
 		return n;
+	}
+	public void setNumeroVertices(int i){
+		n=i;
 	}
 	int getNumeroArestas() {
 		return e;
@@ -159,14 +162,14 @@ public class Grafo {
 			}
 		}
 		if(!entradaCorreta) {
-			System.out.println("Arquivo não consistente com a especificação de entrada");
+			System.out.println("Arquivo n��o consistente com a especifica����o de entrada");
 			return false;
 		}
 		
 		try {
 			input.close();
 		} catch (Exception e) {
-			System.out.println("Não foi possível fechar arquivo");
+			System.out.println("N��o foi poss��vel fechar arquivo");
 			return false;
 		}
 		return true;
@@ -174,7 +177,7 @@ public class Grafo {
 	
 	public boolean printMatriz() {
 		if(tipoRepresentacao == LISTA) {
-			System.out.println("Warning: impressão da matriz solicitada mas representação utilizada é lista de adjacência");
+			System.out.println("Warning: impress��o da matriz solicitada mas representa����o utilizada �� lista de adjac��ncia");
 			return false;
 		}
 		for(int i = 0; i < n; i++) {
@@ -187,7 +190,7 @@ public class Grafo {
 
 	public boolean printLista() {
 		if(tipoRepresentacao == MATRIZ) {
-			System.out.println("Warning: impressão das listas solicitada mas representação utilizada é matriz");
+			System.out.println("Warning: impress��o das listas solicitada mas representa����o utilizada �� matriz");
 			return false;
 		}
 		for(int i = 0; i < n; i++) {

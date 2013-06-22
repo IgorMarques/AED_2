@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Stack;
 
 class SolveShortestPath {
@@ -69,9 +71,9 @@ class SolveShortestPath {
 }
 
 class DisjointSet{
-	public DisjointSet representative;
+	private DisjointSet representative;
 	public int  value;
-	public int order;
+	private int order;
 	
 	public DisjointSet(int i){
 		this.value = i;
@@ -79,18 +81,38 @@ class DisjointSet{
 		this.order=0;
 	}
 	
+	public DisjointSet findset(){
+		if (this.representative== this){
+			return this;
+		}
+		else return this.representative.findset();
+	}
+
+	public int getOrder(){
+		return this.findset().order;
+	}
+	
+	public void setOrder(int o){
+		this.findset().order= o;
+	}
+	
+	public void setRepresentative(DisjointSet d){
+		this.findset().representative= d;
+	}
+	
 	public void union(DisjointSet other){
-		if (this.order > other.order ){
-			other.representative = this.representative;
+		
+		if (this.getOrder() == other.getOrder()){
+			other.setRepresentative(this.findset());
+			this.setOrder(this.order++);
 		}
-		else if(this.order < other.order){
-			this.representative= other.representative;
+		else if (this.getOrder() < other.getOrder()){
+			this.setRepresentative(other.findset());
 		}
-		else {
-			this.representative= other.representative;
-			this.order++;
-			other.order++;
+		else{
+			other.setRepresentative(this.findset());
 		}
+			
 	}
 }
 
@@ -129,7 +151,7 @@ class Kruskal{
 			System.out.println(a.origem);
 			System.out.println(a.destino);
 			
-			if(origem.representative != destino.representative){
+			if(origem.findset() != destino.findset()){
 				System.out.println("adicionando aresta");
 			
 				tree.adicionarAresta(a.origem, a.destino, a.peso);
@@ -142,8 +164,37 @@ class Kruskal{
 		
 		System.out.println("retornando mst");
 		
+		System.out.println(tree.getNumeroVertices());
+		System.out.println(tree.getNumeroArestas());
+		System.out.println(g.getNumeroVertices());
 		return tree;
 	}
+}
+
+class Prim{
+	Grafo g;
+	
+	public Prim (Grafo g){
+		this.g = g;
+	}
+	
+	public Grafo solveMST(){
+		Grafo tree = new Grafo(Grafo.LISTA);
+		
+		PriorityQueue<Aresta> arestas = new PriorityQueue<Aresta>();
+		
+		Queue nos = new LinkedList<Integer>();
+		
+		while (tree.getNumeroArestas() < g.getNumeroArestas() ){
+			
+		}
+		
+		
+		return tree;
+	
+	}
+	
+	
 }
 
 public class ShortestPath {
@@ -174,6 +225,7 @@ public class ShortestPath {
 		
 		tree.printLista();
 		System.out.println("cabou");
+
 	}
 }
 
