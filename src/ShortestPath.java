@@ -330,53 +330,75 @@ class Heap{
 
 	}
 	
-	private int getBiggerChild(int index){
+	private int getSmallestIndex(int index){
 		
-		if(nodes[2*index+1].peso > nodes[index*2].peso)
+		if(nodes[2*index+1].peso < nodes[index*2].peso)
 			return 2*index+1;
 		return 2*index;
 		
 	}
 	
-	public void decreaseKey(Node n, int newPeso){
-		
+	public void decreaseKey(int key, int newPeso){
 		
 		
 		for (int i = 1; i < cont; i++) {
 			
-			if(n.valor == nodes[i].valor && n.peso == nodes[i].peso){
+			if(key == nodes[i].valor){
 				nodes[i].peso= newPeso;
 				climb(i);
+				//System.out.println(i);
+				//System.out.println(nodes[i].valor);
 				return;
 			}
 		}
 		
 	}
 	
+	public boolean has_left(int index){
+		if (2*index <= cont)
+			return true;
+		return false;
+	}
+	
+	public boolean has_right(int index){
+		if (2*index+1 <= cont)
+			return true;
+		return false;
+	}
+	
 	public Node poll(){
-		System.out.println("aqui1");
-		Node root = nodes[1];		
 		
+		Node root = nodes[1];				
 		
-		nodes[1]= nodes[cont-1];		
+		nodes[1]= nodes[cont-1];	
 		
+		cont--;
+		
+		//System.out.println(nodes[1].valor);
 		
 		int index = 1;
 		
-		System.out.println("entrando no while11");
+		if (has_left(index)&& has_right(index)){
 		
-		while(nodes[index].peso > nodes[index*2].peso || nodes[index].peso > nodes[index*2+1].peso){
 			
-			int biggerIndex = getBiggerChild(index);
-			
-			swap(index, biggerIndex);
-			
-			index= biggerIndex;
+			while( nodes[index].peso > nodes[index*2].peso || nodes[index].peso > nodes[index*2+1].peso)
+			{			
+				int smallestIndex = getSmallestIndex(index);
+				
+				
+				swap(index, smallestIndex);
+				
+				
+				index= smallestIndex;
+				
+				//System.out.println(index);
+			}
+		
 		}
-		
-		System.out.println("saindo do while");
-		
-		cont--;
+		else if (has_left(index)){
+			
+			swap(index, 2*index);
+		}
 		
 		return root;
 		
@@ -386,6 +408,13 @@ class Heap{
 		if (cont==1)
 			return true;
 		return false;
+	}
+	
+	public void print(){
+		System.out.println(cont);
+		for (int i = 1; i < cont; i++) {
+			System.out.println(nodes[i].valor+" "+nodes[i].peso);
+		}
 	}
 	
 	
@@ -419,8 +448,7 @@ class Dijkstra{
 		
 		Heap nos = new Heap();
 		
-		for (int k = 0; k < g.getNumeroVertices(); k++) {		
-			
+		for (int k = 0; k < g.getNumeroVertices(); k++) {					
 
 			Node no = new Node(k, MAX);
 			
@@ -434,44 +462,50 @@ class Dijkstra{
 			dis[k]=MAX;
 		}		
 		
+		while(!nos.isEmpty()){	
+			
+			nos.print();
 		
-		while(!vis[destino] && !nos.isEmpty()){	
-				
-			Node currentNode= nos.poll();	
+			Node currentNode= nos.poll();				
 			
-			vis[currentNode.valor]=true;
-			
-			System.out.println("Current Node " + currentNode.valor);
+			System.out.println("Current Node " + currentNode.valor);				
 			
 			ListaAresta currentArestas = g.getLista(currentNode.valor);
 			
 			for (int k = 0; k < currentArestas.getTamanho(); k++) {
 				
-				Aresta a = currentArestas.getAresta(k);				
+				Aresta a = currentArestas.getAresta(k);	
 				
-				if (a.peso + currentNode.peso < dis[a.destino]) {
+				if (!vis[a.destino] && (a.peso + currentNode.peso < dis[a.destino])) {
 					
-					System.out.println(a.destino);
+					int newPeso = a.peso + currentNode.peso;
 					
-					pred[a.destino]=currentNode.valor;
+					nos.decreaseKey(a.destino, newPeso);
 					
-					int newPeso= a.peso + dis[currentNode.valor];
+					dis[a.destino]= newPeso;
 					
-					nos.decreaseKey(new Node(a.destino, dis[a.destino]), newPeso);
-					
-					dis[a.destino]= newPeso;	
+					pred[a.destino]= currentNode.valor;	
 					
 				}
 				
 			}
 			
+			vis[currentNode.valor]=true;
 		}
 		
+
 		int cnode = destino;
+		
+		for (int k = 0; k < g.getNumeroVertices(); k++) {
+			System.out.println(k + " " + pred[k]);
+		}
+		
+		pred[origem]=-1;
 		
 		Stack<Integer> stack = new Stack<>();
 		
 		while (pred[cnode] !=-1) {
+	
 			stack.push(cnode);
 			cnode=pred[cnode];		
 		}
