@@ -300,12 +300,12 @@ class Node implements Comparable<Node>{
 //fiz um heap pois o do java nao possui decrease key
 class Heap{
 	
-	public Node[] nodes;
+	public Node[] nodes= new Node[1000];
+	public int cont=1;
 	
 	public void Heap(){
 	}
-	
-	
+		
 	private void swap(int i, int j){
 		Node aux = nodes[i];		
 		nodes[i]=nodes[j];
@@ -322,14 +322,10 @@ class Heap{
 	}
 	
 	public void offer(Node n){
-	
-		System.out.println("aqui1111");
+
+		nodes[cont]= n;
 		
-		int index = nodes.length;
-		
-		System.out.println(index);
-		
-		nodes[index]= n;
+		cont++;
 		
 
 	}
@@ -358,7 +354,7 @@ class Heap{
 	public Node poll(){
 		Node root = nodes[1];
 		
-		nodes[1]= nodes[nodes.length];
+		nodes[1]= nodes[cont];
 		
 		int index = 0;
 		
@@ -371,12 +367,14 @@ class Heap{
 			index= biggerIndex;
 		}
 		
+		cont--;
+		
 		return root;
 		
 	}
 	
 	public boolean isEmpty(){
-		if (nodes.length==1)
+		if (cont==1)
 			return true;
 		return false;
 	}
@@ -430,6 +428,7 @@ class Dijkstra{
 			pred[k]=-1;
 			dis[k]=MAX;
 		}		
+		
 		
 		while(!vis[destino] && !nos.isEmpty()){			
 				
