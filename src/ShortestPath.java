@@ -297,6 +297,94 @@ class Node implements Comparable<Node>{
 	
 }
 
+//fiz um heap pois o do java nao possui decrease key
+class Heap{
+	
+	public Node[] nodes;
+	
+	public void Heap(){
+	}
+	
+	
+	private void swap(int i, int j){
+		Node aux = nodes[i];		
+		nodes[i]=nodes[j];
+		nodes[j]=aux;
+	}
+	
+	private void climb(int index){
+		while(index/2 > 0){
+			
+			if (nodes[index/2].peso > nodes[index].peso){
+				swap(index/2, index);
+			}
+		}
+	}
+	
+	public void offer(Node n){
+	
+		System.out.println("aqui1111");
+		
+		int index = nodes.length;
+		
+		System.out.println(index);
+		
+		nodes[index]= n;
+		
+
+	}
+	
+	private int getBiggerChild(int index){
+		
+		if(nodes[2*index+1].peso > nodes[index*2].peso)
+			return 2*index+1;
+		return 2*index;
+		
+	}
+	
+	public void decreaseKey(Node n, int newPeso){
+		
+		for (int i = 0; i < nodes.length; i++) {
+			
+			if(n.valor == nodes[i].valor && n.peso == nodes[i].peso){
+				nodes[i].peso= newPeso;
+				climb(i);
+				return;
+			}
+		}
+		
+	}
+	
+	public Node poll(){
+		Node root = nodes[1];
+		
+		nodes[1]= nodes[nodes.length];
+		
+		int index = 0;
+		
+		while(nodes[index].peso > nodes[index*2].peso || nodes[index].peso > nodes[index*2+1].peso){
+			
+			int biggerIndex = getBiggerChild(index);
+			
+			swap(index, biggerIndex);
+			
+			index= biggerIndex;
+		}
+		
+		return root;
+		
+	}
+	
+	public boolean isEmpty(){
+		if (nodes.length==1)
+			return true;
+		return false;
+	}
+	
+	
+}
+
+
 class Dijkstra{
 	
 	Grafo g;
@@ -307,12 +395,6 @@ class Dijkstra{
 		this.g = g;
 	}
 	
-	//implemente getShortestPath com uma das seguintes operacoess
-	//1) Floyd-warshall O(n^3) (2.5 pts)
-	//2) Dijkstra com fila de prioridade (2.5 pts) ou com busca linear (1.8 pts)
-	//3) Bellman-ford (2.5 pts)
-	
-    //mestodos de uma ArrayList: boolean isEmpty(), void add(int), void remove()
 	ArrayList<Integer> getShortestPath(int i, int j) {
 		
 		int destino = j;
@@ -328,9 +410,12 @@ class Dijkstra{
 		
 		int dis[]=new int[g.getNumeroVertices()];
 		
-		PriorityQueue<Node> nos = new PriorityQueue<>();
+		Heap nos = new Heap();
 		
-		for (int k = 0; k < g.getNumeroVertices(); k++) {			
+		for (int k = 0; k < g.getNumeroVertices(); k++) {		
+			
+
+			System.out.println("aqui2");
 
 			Node no = new Node(k, MAX);
 			
@@ -339,6 +424,8 @@ class Dijkstra{
 			
 			nos.offer(no);
 			
+
+			System.out.println("aqui3");
 			vis[k]= false;
 			pred[k]=-1;
 			dis[k]=MAX;
@@ -356,17 +443,19 @@ class Dijkstra{
 			
 			for (int k = 0; k < currentArestas.getTamanho(); k++) {
 				
-				Aresta a = currentArestas.getAresta(k);
+				Aresta a = currentArestas.getAresta(k);				
 				
 				if (a.peso + currentNode.peso < dis[a.destino]) {
 					
+					System.out.println(a.destino);
+					
 					pred[a.destino]=currentNode.valor;
 					
-					nos.remove(new Node(a.destino, dis[a.destino]));
+					int newPeso= a.peso + dis[currentNode.valor];
 					
-					dis[a.destino]= a.peso + dis[currentNode.valor];
+					nos.decreaseKey(new Node(a.destino, dis[a.destino]), newPeso);
 					
-					nos.offer(new Node(a.destino, dis[a.destino]));					
+					dis[a.destino]= newPeso;			
 					
 				}
 				
