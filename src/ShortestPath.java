@@ -118,56 +118,74 @@ class DisjointSet{
 
 class Kruskal{
 	Grafo g;
+	
 	public Kruskal(Grafo g) {
 		this.g = g;
 	}
 	
-	public Grafo solveMST(){
+	public ArrayList<Aresta> solveMST(){
+		
+		//lista de arestas da mst
+		ArrayList<Aresta> mst_arestas = new ArrayList<>();
+		
+		//grafo da mst
 		Grafo tree = new Grafo(Grafo.LISTA);
 		
-		//System.out.println("criando filas e vetores");
+		tree.setNumeroVertices(g.getNumeroVertices());
+		
+		tree.init();
+		
+		//fila de prioridade de arestas
 		PriorityQueue<Aresta> arestas = new PriorityQueue<Aresta>();
+		
+		//conjuntos de conjuntos disjuntos dos nós
 		DisjointSet[] nos = new DisjointSet[g.getNumeroVertices()];
 		
-		//System.out.println("populando fila");
+		
+		//ordenando as arestas
 		for (Aresta aresta : g.getVetorArestas()) {
 			arestas.offer(aresta);
 		}
 		
-		//System.out.println("populando vetor");
+		//criando os conjuntos para cada nó
 		for (int i=0; i <g.getNumeroVertices(); i++) {							
 			nos[i]= new DisjointSet(i);
 		}
 		
-		//System.out.println("iterando");
+		
+		//executando o algoritmo propriamente dito
 		for (int i = 0; i < g.getNumeroVertices()-1; i++) {
-			Aresta a= arestas.poll();
 			
-			System.out.println("Aresta:");
+			//menor aresta
+			Aresta a= arestas.poll();
 			
 			DisjointSet origem = nos[a.origem];
 			DisjointSet destino = nos[a.destino];
-			
-			System.out.println(a.origem);
-			System.out.println(a.destino);
-			
-			if(origem.findset() != destino.findset()){
-				System.out.println("adicionando aresta");
+		
+			//se ela conecta duas árvores distintas
+			if(origem.findset() != destino.findset()){	
+				
+				//adiciona na lista de arestas e no grafo
+				mst_arestas.add(a);
 			
 				tree.adicionarAresta(a.origem, a.destino, a.peso);
 				
-				System.out.println("unindo conjuntos");
+				//caso especial do mesmo nao ser orientado
+				if (!g.isOrientado()){
+					tree.adicionarAresta(a.destino, a.origem, a.peso);
+					Aresta b = new Aresta(a.destino, a.origem, a.peso);
+					mst_arestas.add(b);
+				}
 				
 				origem.union(destino);
 			}
 		}		
 		
-		System.out.println("retornando mst");
+		//imprime a árvore
+		tree.printLista();
 		
-		System.out.println(tree.getNumeroVertices());
-		System.out.println(tree.getNumeroArestas());
-		System.out.println(g.getNumeroVertices());
-		return tree;
+		//retorna a lista de arestas
+		return mst_arestas;
 	}
 }
 
@@ -178,19 +196,94 @@ class Prim{
 		this.g = g;
 	}
 	
-	public Grafo solveMST(){
+	public ArrayList<Aresta> solveMST(){
+		
+		//lista de arestas da mst
+		ArrayList<Aresta> mst_arestas = new ArrayList<>();
+		
+		//grafo que representa a mst
 		Grafo tree = new Grafo(Grafo.LISTA);
 		
-		PriorityQueue<Aresta> arestas = new PriorityQueue<Aresta>();
+		//inicializando
+		tree.setNumeroVertices(g.getNumeroVertices());
 		
-		Queue nos = new LinkedList<Integer>();
+		tree.init();
 		
-		while (tree.getNumeroArestas() < g.getNumeroArestas() ){
+		//fila de prioridade de arestas
+		PriorityQueue<Aresta> filaArestas = new PriorityQueue<Aresta>();
+		
+		//fila de nós
+		LinkedList<Integer> nos = new LinkedList<Integer>();
+		
+		//nó inicial
+		nos.add(0);		
+		
+		//lista de visitados
+		boolean vis[] = new boolean[g.getNumeroVertices()];
+		
+		//enquanto houverem nós a serem adicionados
+		while (!nos.isEmpty() && tree.getNumeroVertices() < g.getNumeroVertices()) {
 			
+			//nó atual (primeiro da fila)
+			int currentNode = nos.poll();
+			
+			//marca o mesmo como visitado
+			vis[currentNode]=true;
+			
+			System.out.println(currentNode);
+			
+			//pega a lista de arestas do nó atual
+			ListaAresta currentArestas = g.getLista(currentNode);
+			
+			//adiciona na fila de prioridades
+			for (int i = 0; i < currentArestas.getTamanho(); i++) {
+				filaArestas.offer(currentArestas.getAresta(i));
+			}
+			
+			//pega a menor
+			Aresta a = filaArestas.poll();
+			
+			//DAISIAJISAPROBLEMA TA AQUI
+			//DAISIAJISAPROBLEMA TA AQUI
+			//DAISIAJISAPROBLEMA TA AQUI
+			//DAISIAJISAPROBLEMA TA AQUI
+			//DAISIAJISAPROBLEMA TA AQUI
+			while(vis[a.destino]== true && !filaArestas.isEmpty()){
+				a = filaArestas.poll();
+			}
+			
+			//DAISIAJISAPROBLEMA TA AQUI
+			//DAISIAJISAPROBLEMA TA AQUI
+			//DAISIAJISAPROBLEMA TA AQUI
+			//DAISIAJISAPROBLEMA TA AQUI
+			
+			//adiciona destino a fila
+			nos.add(a.destino);	
+			System.out.println("Add");
+			System.out.println(a.destino);
+			
+			//adiciona aresta a árvore
+			tree.adicionarAresta(a.origem, a.destino, a.peso);
+			
+			mst_arestas.add(a);
+			
+			
+			
+			if (!g.isOrientado()){
+				tree.adicionarAresta(a.destino, a.origem, a.peso);
+				Aresta b = new Aresta(a.destino, a.origem, a.peso);
+				mst_arestas.add(b);
+				
+			}
+			
+			System.out.println("hue");
+			
+						
 		}
 		
-		
-		return tree;
+		tree.printLista();
+		System.out.println("terminou prim");
+		return mst_arestas;
 	
 	}
 	
@@ -221,9 +314,18 @@ public class ShortestPath {
 		//MST
 		
 		Kruskal kruskal = new Kruskal(g);
-		Grafo tree = kruskal.solveMST();
+		//ArrayList<Aresta> tree = kruskal.solveMST();
 		
-		tree.printLista();
+		
+		Prim prim = new Prim(g);
+		ArrayList<Aresta> tree = prim.solveMST();
+		
+		for(Aresta a: tree){
+			System.out.println(a.origem);
+			System.out.println(a.destino);
+			System.out.println(a.peso);
+			System.out.println("--");
+		}
 		System.out.println("cabou");
 
 	}

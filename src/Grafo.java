@@ -96,7 +96,10 @@ public class Grafo {
 	
 	//adicionar aresta orientada
 	public boolean adicionarAresta(int origem, int destino, int peso) {
-		if(origem < 0 || destino < 0 || peso <= 0 || origem >= n || destino >= n) return false;
+		if(origem < 0 || destino < 0 || peso <= 0 || origem >= n || destino >= n){
+			System.out.println("AQUI TEM ERRO");
+			return false;
+		}
 		if(tipoRepresentacao == MATRIZ) {
 			matriz[origem][destino] = peso;
 		} else {
