@@ -217,72 +217,63 @@ class Prim{
 		
 		//nó inicial
 		nos.add(0);		
-		
+	
 		//lista de visitados
 		boolean vis[] = new boolean[g.getNumeroVertices()];
 		
 		//enquanto houverem nós a serem adicionados
-		while (!nos.isEmpty() && tree.getNumeroVertices() < g.getNumeroVertices()) {
+		while (!nos.isEmpty()) {
 			
-			//nó atual (primeiro da fila)
+			//nó atual
 			int currentNode = nos.poll();
 			
-			//marca o mesmo como visitado
+			//marca como visitado
 			vis[currentNode]=true;
 			
-			System.out.println(currentNode);
+			//pega  as arestas
+			ListaAresta currentArestas= g.getLista(currentNode);
 			
-			//pega a lista de arestas do nó atual
-			ListaAresta currentArestas = g.getLista(currentNode);
-			
-			//adiciona na fila de prioridades
+			//joga numa fila de prioridade
 			for (int i = 0; i < currentArestas.getTamanho(); i++) {
-				filaArestas.offer(currentArestas.getAresta(i));
+				Aresta a = currentArestas.getAresta(i);
+				
+				filaArestas.offer(a);
 			}
 			
 			//pega a menor
 			Aresta a = filaArestas.poll();
 			
-			//DAISIAJISAPROBLEMA TA AQUI
-			//DAISIAJISAPROBLEMA TA AQUI
-			//DAISIAJISAPROBLEMA TA AQUI
-			//DAISIAJISAPROBLEMA TA AQUI
-			//DAISIAJISAPROBLEMA TA AQUI
-			while(vis[a.destino]== true && !filaArestas.isEmpty()){
+			//enquanto ela levar a um destino ja visitado e a fila nao estiver vazia
+			while (vis[a.destino] && !filaArestas.isEmpty()) {
+				//pega a seguinte
 				a = filaArestas.poll();
 			}
 			
-			//DAISIAJISAPROBLEMA TA AQUI
-			//DAISIAJISAPROBLEMA TA AQUI
-			//DAISIAJISAPROBLEMA TA AQUI
-			//DAISIAJISAPROBLEMA TA AQUI
-			
-			//adiciona destino a fila
-			nos.add(a.destino);	
-			System.out.println("Add");
-			System.out.println(a.destino);
-			
-			//adiciona aresta a árvore
-			tree.adicionarAresta(a.origem, a.destino, a.peso);
-			
-			mst_arestas.add(a);
-			
-			
-			
-			if (!g.isOrientado()){
-				tree.adicionarAresta(a.destino, a.origem, a.peso);
-				Aresta b = new Aresta(a.destino, a.origem, a.peso);
-				mst_arestas.add(b);
+			//caso a final nao leve pra um destino visitado
+			if(!vis[a.destino]){
 				
-			}
+				//adiciona na árvore
+				tree.adicionarAresta(a.origem, a.destino, a.peso);
+				mst_arestas.add(a);
+				
+				//para os casos de grafo nao orientado
+				if (!g.isOrientado()){
+					tree.adicionarAresta(a.destino, a.origem, a.peso);
+					Aresta b = new Aresta(a.destino, a.origem, a.peso);
+					mst_arestas.add(b);
+				}
 			
-			System.out.println("hue");
+				//adiciona o destino a fila
+				nos.offer(a.destino);
+			}
 			
 						
 		}
 		
+		//imprime a árvore
 		tree.printLista();
-		System.out.println("terminou prim");
+		
+		//retorna as arestas
 		return mst_arestas;
 	
 	}
