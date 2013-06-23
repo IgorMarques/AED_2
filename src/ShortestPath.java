@@ -280,6 +280,23 @@ class Prim{
 	
 }
 
+class Node implements Comparable<Node>{
+	
+	public int peso;
+	public int valor;
+
+	public Node(int v, int p){
+		this.valor=v;
+		this.peso= p;
+	}
+	
+	@Override
+	public int compareTo(Node o) {
+		return this.peso - o.peso;
+	}
+	
+}
+
 class Dijkstra{
 	
 	Grafo g;
@@ -305,51 +322,55 @@ class Dijkstra{
 		
 		PriorityQueue<Aresta> arestas = new PriorityQueue<>();
 		
-		LinkedList<Integer> nos = new LinkedList<>();
-		
 		boolean vis[] = new boolean[g.getNumeroVertices()];
-		
-		int dis[]= new int[g.getNumeroVertices()];
 		
 		int pred[]= new int[g.getNumeroVertices()];
 		
-		for (int k = 0; k < g.getNumeroVertices(); k++) {
-			dis[k]= MAX;
+		int dis[]=new int[g.getNumeroVertices()];
+		
+		PriorityQueue<Node> nos = new PriorityQueue<>();
+		
+		for (int k = 0; k < g.getNumeroVertices(); k++) {			
+
+			Node no = new Node(k, MAX);
+			
+			if(k==i)
+				no.peso=0;
+			
+			nos.offer(no);
+			
 			vis[k]= false;
 			pred[k]=-1;
-		}
-		
-		dis[origem]=0;
-		
-		nos.add(origem);		
+			dis[k]=MAX;
+		}		
 		
 		while(!vis[destino] && !nos.isEmpty()){			
 				
-			int currentNode= nos.poll();	
+			Node currentNode= nos.poll();	
 			
-			vis[currentNode]=true;
+			vis[currentNode.valor]=true;
 			
-			System.out.println("Current Node" + currentNode);
+			System.out.println("Current Node " + currentNode.valor);
 			
-			ListaAresta currentArestas = g.getLista(currentNode);
+			ListaAresta currentArestas = g.getLista(currentNode.valor);
 			
 			for (int k = 0; k < currentArestas.getTamanho(); k++) {
 				
 				Aresta a = currentArestas.getAresta(k);
 				
-				if (a.peso + dis[currentNode] < dis[a.destino]) {
+				if (a.peso + currentNode.peso < dis[a.destino]) {
 					
-					pred[a.destino]=currentNode;
+					pred[a.destino]=currentNode.valor;
 					
-					dis[a.destino]= a.peso + dis[currentNode];
+					nos.remove(new Node(a.destino, dis[a.destino]));
 					
-					arestas.offer(a);
+					dis[a.destino]= a.peso + dis[currentNode.valor];
+					
+					nos.offer(new Node(a.destino, dis[a.destino]));					
 					
 				}
 				
 			}
-			if (!arestas.isEmpty())
-				nos.add(arestas.poll().destino);
 			
 		}
 		
@@ -375,7 +396,7 @@ public class ShortestPath {
 
 	public static void main(String[] args) {
 		Grafo g = new Grafo(Grafo.LISTA);
-		g.lerGrafoDeArquivo("grafo2prova.in", false, true);
+		g.lerGrafoDeArquivo("grafo1prova.in", false, true);
 		g.printLista();
 		
 		//SolveShortestPath ssp = new SolveShortestPath(g);
