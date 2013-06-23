@@ -278,6 +278,96 @@ class Prim{
 	
 	}
 	
+}
+
+class Dijkstra{
+	
+	Grafo g;
+	
+	public static final int MAX = 99999;
+	
+	public Dijkstra(Grafo g) {
+		this.g = g;
+	}
+	
+	//implemente getShortestPath com uma das seguintes operacoess
+	//1) Floyd-warshall O(n^3) (2.5 pts)
+	//2) Dijkstra com fila de prioridade (2.5 pts) ou com busca linear (1.8 pts)
+	//3) Bellman-ford (2.5 pts)
+	
+    //mestodos de uma ArrayList: boolean isEmpty(), void add(int), void remove()
+	ArrayList<Integer> getShortestPath(int i, int j) {
+		
+		int destino = j;
+		int origem = i;
+	
+		ArrayList<Integer> path = new ArrayList<Integer>();
+		
+		PriorityQueue<Aresta> arestas = new PriorityQueue<>();
+		
+		LinkedList<Integer> nos = new LinkedList<>();
+		
+		boolean vis[] = new boolean[g.getNumeroVertices()];
+		
+		int dis[]= new int[g.getNumeroVertices()];
+		
+		int pred[]= new int[g.getNumeroVertices()];
+		
+		for (int k = 0; k < g.getNumeroVertices(); k++) {
+			dis[k]= MAX;
+			vis[k]= false;
+			pred[k]=-1;
+		}
+		
+		dis[origem]=0;
+		
+		nos.add(origem);		
+		
+		while(!vis[destino] && !nos.isEmpty()){			
+				
+			int currentNode= nos.poll();	
+			
+			vis[currentNode]=true;
+			
+			System.out.println("Current Node" + currentNode);
+			
+			ListaAresta currentArestas = g.getLista(currentNode);
+			
+			for (int k = 0; k < currentArestas.getTamanho(); k++) {
+				
+				Aresta a = currentArestas.getAresta(k);
+				
+				if (a.peso + dis[currentNode] < dis[a.destino]) {
+					
+					pred[a.destino]=currentNode;
+					
+					dis[a.destino]= a.peso + dis[currentNode];
+					
+					arestas.offer(a);
+					
+				}
+				
+			}
+			if (!arestas.isEmpty())
+				nos.add(arestas.poll().destino);
+			
+		}
+		
+		int cnode = destino;
+		
+		Stack<Integer> stack = new Stack<>();
+		
+		while (pred[cnode] !=-1) {
+			stack.push(cnode);
+			cnode=pred[cnode];		
+		}
+		
+		while (!stack.isEmpty()) {
+			path.add(stack.pop());
+		}
+		
+		return path;
+	}
 	
 }
 
@@ -285,39 +375,51 @@ public class ShortestPath {
 
 	public static void main(String[] args) {
 		Grafo g = new Grafo(Grafo.LISTA);
-		g.lerGrafoDeArquivo("grafo1.in", false, true);
+		g.lerGrafoDeArquivo("grafo2prova.in", false, true);
 		g.printLista();
 		
-		SolveShortestPath ssp = new SolveShortestPath(g);
+		//SolveShortestPath ssp = new SolveShortestPath(g);
+		Dijkstra ssp= new Dijkstra(g);
 		
 		//SHORTEST PATH
-//		ArrayList<Integer> path = ssp.getShortestPath(0, 1);
-//		if(path.size() == 0)
-//			System.out.println("No path");
-//		else {
-//			for (int v: path) {
-//				System.out.printf("%d ", v);
-//			}
-//			
-//			System.out.println();
-//		}
+		
+		ArrayList<Integer> path = ssp.getShortestPath(0, 1);
+		
+		if(path.size() == 0)
+			System.out.println("No path");
+		else {
+			int custo=0;
+			int oldNode=0;
+			
+			for (int p: path) {
+				System.out.printf("%d ", p);
+				
+				custo+= g.getPeso(oldNode, p);
+				
+				oldNode=p;
+			}
+			
+			System.out.println(custo);
+			
+			System.out.println();
+		}
 		
 		//MST
 		
-		Kruskal kruskal = new Kruskal(g);
-		//ArrayList<Aresta> tree = kruskal.solveMST();
-		
-		
-		Prim prim = new Prim(g);
-		ArrayList<Aresta> tree = prim.solveMST();
-		
-		for(Aresta a: tree){
-			System.out.println(a.origem);
-			System.out.println(a.destino);
-			System.out.println(a.peso);
-			System.out.println("--");
-		}
-		System.out.println("cabou");
+//		Kruskal kruskal = new Kruskal(g);
+//		//ArrayList<Aresta> tree = kruskal.solveMST();
+//		
+//		
+//		Prim prim = new Prim(g);
+//		ArrayList<Aresta> tree = prim.solveMST();
+//		
+//		for(Aresta a: tree){
+//			System.out.println(a.origem);
+//			System.out.println(a.destino);
+//			System.out.println(a.peso);
+//			System.out.println("--");
+//		}
+//		System.out.println("cabou");
 
 	}
 }
