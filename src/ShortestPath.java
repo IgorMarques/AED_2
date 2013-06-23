@@ -340,7 +340,9 @@ class Heap{
 	
 	public void decreaseKey(Node n, int newPeso){
 		
-		for (int i = 0; i < nodes.length; i++) {
+		
+		
+		for (int i = 1; i < cont; i++) {
 			
 			if(n.valor == nodes[i].valor && n.peso == nodes[i].peso){
 				nodes[i].peso= newPeso;
@@ -352,11 +354,16 @@ class Heap{
 	}
 	
 	public Node poll(){
-		Node root = nodes[1];
+		System.out.println("aqui1");
+		Node root = nodes[1];		
 		
-		nodes[1]= nodes[cont];
 		
-		int index = 0;
+		nodes[1]= nodes[cont-1];		
+		
+		
+		int index = 1;
+		
+		System.out.println("entrando no while11");
 		
 		while(nodes[index].peso > nodes[index*2].peso || nodes[index].peso > nodes[index*2+1].peso){
 			
@@ -366,6 +373,8 @@ class Heap{
 			
 			index= biggerIndex;
 		}
+		
+		System.out.println("saindo do while");
 		
 		cont--;
 		
@@ -413,24 +422,20 @@ class Dijkstra{
 		for (int k = 0; k < g.getNumeroVertices(); k++) {		
 			
 
-			System.out.println("aqui2");
-
 			Node no = new Node(k, MAX);
 			
 			if(k==i)
 				no.peso=0;
 			
 			nos.offer(no);
-			
 
-			System.out.println("aqui3");
 			vis[k]= false;
 			pred[k]=-1;
 			dis[k]=MAX;
 		}		
 		
 		
-		while(!vis[destino] && !nos.isEmpty()){			
+		while(!vis[destino] && !nos.isEmpty()){	
 				
 			Node currentNode= nos.poll();	
 			
@@ -454,7 +459,7 @@ class Dijkstra{
 					
 					nos.decreaseKey(new Node(a.destino, dis[a.destino]), newPeso);
 					
-					dis[a.destino]= newPeso;			
+					dis[a.destino]= newPeso;	
 					
 				}
 				
