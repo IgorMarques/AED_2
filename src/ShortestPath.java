@@ -519,6 +519,79 @@ class Dijkstra{
 	
 }
 
+class BellmanFord{
+	
+	public static final int MAX = 99999;
+	
+	public Grafo g;
+	
+	public BellmanFord(Grafo grafo){
+		this.g=grafo;
+	}
+	
+	ArrayList<Integer> getShortestPath(int origem, int destino) {
+		ArrayList<Integer> path = new ArrayList<>();
+		
+		Aresta[] arestas = g.getVetorArestas();
+		
+		int[] dist = new int[g.getNumeroVertices()];
+		int[] pred = new int[g.getNumeroVertices()];
+	
+		for (int k = 0; k < dist.length; k++) {
+			dist[k]=MAX;
+			pred[k]=-1;
+		}
+		
+		dist[origem]= 0;
+		
+		
+		
+		for (int k = 0; k < g.getNumeroVertices(); k++) {
+			
+			System.out.println("\nIteracao num: "+ k);
+			for(Aresta a: arestas){
+	
+				System.out.println("Origem:  "+ a.origem+  " : "+ dist[a.origem] + " : " + a.peso);
+				System.out.println("Destino: "+ a.destino+  " : "+ dist[a.destino]+ " : " + a.peso);
+				
+				if(dist[a.origem]+a.peso < dist[a.destino]){
+					System.out.println();
+					
+					dist[a.destino]=dist[a.origem]+a.peso;
+					pred[a.destino]=a.origem;
+				}	
+				else if (!g.isOrientado() && dist[a.destino] + a.peso < dist[a.origem]) {
+					dist[a.origem] = dist[a.destino] + a.peso;
+					pred[a.origem] = a.destino;
+				}
+								
+			}
+		}
+		
+		int cnode = destino;
+		
+		for (int k = 0; k < g.getNumeroVertices(); k++) {
+			System.out.println(k + " " + pred[k]);
+		}
+		
+		Stack<Integer> stack = new Stack<>();
+		
+		while (pred[cnode] !=-1) {
+	
+			stack.push(cnode);
+			cnode=pred[cnode];		
+		}
+		
+		while (!stack.isEmpty()) {
+			path.add(stack.pop());
+		}		
+		
+		return path;
+	}
+	
+	
+}
+
 public class ShortestPath {
 
 	public static void main(String[] args) {
@@ -527,7 +600,8 @@ public class ShortestPath {
 		g.printLista();
 		
 		//SolveShortestPath ssp = new SolveShortestPath(g);
-		Dijkstra ssp= new Dijkstra(g);
+		//Dijkstra ssp= new Dijkstra(g);
+		BellmanFord ssp = new BellmanFord(g);
 		
 		//SHORTEST PATH
 		
