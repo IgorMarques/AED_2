@@ -4,6 +4,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
 
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+
 class SolveShortestPath {
 	
 	private static final int INFINITY = 99999;
@@ -552,7 +554,6 @@ class BellmanFord{
 		//distancia para a origem é nula
 		dist[origem]= 0;
 		
-		
 		//fazendo as n-1 iteracoes
 		for (int k = 0; k < g.getNumeroVertices(); k++) {
 			
@@ -602,42 +603,88 @@ class BellmanFord{
 	
 }
 
+class BFS{
+	
+	Grafo g;
+	
+	public BFS(Grafo g){
+		this.g=g;
+	}
+	
+	
+	public void search(int origem, int destino){
+		
+		LinkedList<Integer> nos = new LinkedList<>();
+		
+		nos.add(origem);
+		
+		int currentNode;
+		
+		boolean vis[] = new boolean[g.getNumeroVertices()];
+
+		for (int i = 0; i < vis.length; i++) {
+			vis[i]=false;
+		}
+		
+		do{
+			currentNode= nos.poll();
+			
+			ListaAresta arestas = g.getLista(currentNode);
+					
+			for(int k=0; k< arestas.getTamanho(); k++){
+				
+				int next_node= arestas.getAresta(k).destino;
+				
+				if (!vis[next_node])
+					nos.add(next_node);
+				
+			}
+			
+			System.out.println(currentNode);
+			vis[currentNode]=true;
+
+			
+		}while (currentNode != destino);
+		
+	}
+}
+
 public class ShortestPath {
 
 	public static void main(String[] args) {
 		Grafo g = new Grafo(Grafo.LISTA);
-		g.lerGrafoDeArquivo("grafo2prova.in", false, true);
+		g.lerGrafoDeArquivo("grafo1prova.in", false, true);
 		g.printLista();
 		
 		//SolveShortestPath ssp = new SolveShortestPath(g);
 		//Dijkstra ssp= new Dijkstra(g);
-		BellmanFord ssp = new BellmanFord(g);
+		//BellmanFord ssp = new BellmanFord(g);
 		
 		//SHORTEST PATH
 		
-		ArrayList<Integer> path = ssp.getShortestPath(0, 1);
-		
-		if(path.size() == 0)
-			System.out.println("No path");
-		else {
-			int custo=0;
-			int oldNode=0;
-			
-			System.out.println("Caminho: ");
-			
-			for (int p: path) {
-				System.out.printf("%d ", p);
-				
-				custo+= g.getPeso(oldNode, p);
-				
-				oldNode=p;
-			}
-			
-			System.out.println("\nCusto:" + custo);
-			
-			System.out.println();
-		}
-		
+//		ArrayList<Integer> path = ssp.getShortestPath(0, 1);
+//		
+//		if(path.size() == 0)
+//			System.out.println("No path");
+//		else {
+//			int custo=0;
+//			int oldNode=0;
+//			
+//			System.out.println("Caminho: ");
+//			
+//			for (int p: path) {
+//				System.out.printf("%d ", p);
+//				
+//				custo+= g.getPeso(oldNode, p);
+//				
+//				oldNode=p;
+//			}
+//			
+//			System.out.println("\nCusto:" + custo);
+//			
+//			System.out.println();
+//		}
+//		
 		//MST
 		
 //		Kruskal kruskal = new Kruskal(g);
@@ -655,6 +702,11 @@ public class ShortestPath {
 //		}
 //		System.out.println("cabou");
 
+		//SEARCH
+		BFS bfs = new BFS(g);
+		
+		bfs.search(0, 1);
+		
 	}
 }
 
