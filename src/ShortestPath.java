@@ -545,17 +545,15 @@ class BellmanFord{
 		dist[origem]= 0;
 		
 		
-		
 		for (int k = 0; k < g.getNumeroVertices(); k++) {
 			
-			System.out.println("\nIteracao num: "+ k);
+			//System.out.println("\nIteracao num: "+ k);
 			for(Aresta a: arestas){
 	
-				System.out.println("Origem:  "+ a.origem+  " : "+ dist[a.origem] + " : " + a.peso);
-				System.out.println("Destino: "+ a.destino+  " : "+ dist[a.destino]+ " : " + a.peso);
+				//System.out.println("Origem:  "+ a.origem+  " : "+ dist[a.origem] + " : " + a.peso);
+				//System.out.println("Destino: "+ a.destino+  " : "+ dist[a.destino]+ " : " + a.peso);
 				
 				if(dist[a.origem]+a.peso < dist[a.destino]){
-					System.out.println();
 					
 					dist[a.destino]=dist[a.origem]+a.peso;
 					pred[a.destino]=a.origem;
@@ -569,10 +567,6 @@ class BellmanFord{
 		}
 		
 		int cnode = destino;
-		
-		for (int k = 0; k < g.getNumeroVertices(); k++) {
-			System.out.println(k + " " + pred[k]);
-		}
 		
 		Stack<Integer> stack = new Stack<>();
 		
@@ -596,7 +590,7 @@ public class ShortestPath {
 
 	public static void main(String[] args) {
 		Grafo g = new Grafo(Grafo.LISTA);
-		g.lerGrafoDeArquivo("grafo1prova.in", false, true);
+		g.lerGrafoDeArquivo("grafo2prova.in", false, true);
 		g.printLista();
 		
 		//SolveShortestPath ssp = new SolveShortestPath(g);
@@ -613,6 +607,8 @@ public class ShortestPath {
 			int custo=0;
 			int oldNode=0;
 			
+			System.out.println("Caminho: ");
+			
 			for (int p: path) {
 				System.out.printf("%d ", p);
 				
@@ -621,7 +617,7 @@ public class ShortestPath {
 				oldNode=p;
 			}
 			
-			System.out.println(custo);
+			System.out.println("\nCusto:" + custo);
 			
 			System.out.println();
 		}
