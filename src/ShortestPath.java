@@ -327,48 +327,38 @@ class Heap{
 		return false;
 	}
 	
+	public void heapfy(int index){		
+		
+		if (has_left(index)&& has_right(index)){			
+			
+			while( nodes[index].peso > nodes[index*2].peso || nodes[index].peso > nodes[index*2+1].peso)
+			{			
+				int smallestIndex = getSmallestIndex(index);				
+			
+				swap(index, smallestIndex);				
+				
+				index= smallestIndex;	
+				
+				//System.out.println(index);
+			}			
+			
+		}
+		else if (has_left(index) && nodes[index*2].peso > nodes[index].peso){
+			
+			System.out.println("quebrou");
+			swap(index, 2*index);
+		}
+	}
+	
 	public Node poll(){
 		
 		Node root = nodes[1];				
 		
 		nodes[1]= nodes[cont-1];	
 		
-		cont--;
+		cont--;	
 		
-		
-		
-		int index = 1;
-		
-		if (has_left(index)&& has_right(index)){
-		
-			
-			
-			while( nodes[index].peso > nodes[index*2].peso || nodes[index].peso > nodes[index*2+1].peso)
-			{			
-				int smallestIndex = getSmallestIndex(index);
-				
-				
-				
-				swap(index, smallestIndex);
-				
-				
-				
-				index= smallestIndex;
-		
-				
-				//System.out.println(index);
-			}
-			
-			
-			
-		
-		}
-		else if (has_left(index)){
-			
-			swap(index, 2*index);
-		}
-		
-		
+		heapfy(1);		
 		
 		return root;
 		
