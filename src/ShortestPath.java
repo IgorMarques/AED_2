@@ -420,7 +420,7 @@ class Heap{
 	
 }
 
-
+//nao funciona direito...
 class Dijkstra{
 	
 	Grafo g;
@@ -530,34 +530,44 @@ class BellmanFord{
 	}
 	
 	ArrayList<Integer> getShortestPath(int origem, int destino) {
+		
+		//caminho
 		ArrayList<Integer> path = new ArrayList<>();
 		
+		//arestas
 		Aresta[] arestas = g.getVetorArestas();
 		
+		//lista de distancias
 		int[] dist = new int[g.getNumeroVertices()];
+		
+		//lista de predecessores
 		int[] pred = new int[g.getNumeroVertices()];
 	
+		//setando as distancias pra infinito e os predecessores pra invalidos
 		for (int k = 0; k < dist.length; k++) {
 			dist[k]=MAX;
 			pred[k]=-1;
 		}
 		
+		//distancia para a origem é nula
 		dist[origem]= 0;
 		
 		
+		//fazendo as n-1 iteracoes
 		for (int k = 0; k < g.getNumeroVertices(); k++) {
 			
-			//System.out.println("\nIteracao num: "+ k);
+			//tenta relaxar cada aresta
 			for(Aresta a: arestas){
 	
-				//System.out.println("Origem:  "+ a.origem+  " : "+ dist[a.origem] + " : " + a.peso);
-				//System.out.println("Destino: "+ a.destino+  " : "+ dist[a.destino]+ " : " + a.peso);
 				
+				//se a distancia ate o no atual + o peso da aresta é menor que a distancia atual do nó				
 				if(dist[a.origem]+a.peso < dist[a.destino]){
 					
+					//relaxa
 					dist[a.destino]=dist[a.origem]+a.peso;
 					pred[a.destino]=a.origem;
 				}	
+				//caso especial (grafo nao orientado)
 				else if (!g.isOrientado() && dist[a.destino] + a.peso < dist[a.origem]) {
 					dist[a.origem] = dist[a.destino] + a.peso;
 					pred[a.origem] = a.destino;
@@ -570,16 +580,22 @@ class BellmanFord{
 		
 		Stack<Integer> stack = new Stack<>();
 		
+		//empilhando o caminho
 		while (pred[cnode] !=-1) {
 	
 			stack.push(cnode);
 			cnode=pred[cnode];		
 		}
 		
+		if(!stack.isEmpty())
+			stack.push(origem);
+		
+		//desempilhando
 		while (!stack.isEmpty()) {
 			path.add(stack.pop());
 		}		
 		
+			
 		return path;
 	}
 	
