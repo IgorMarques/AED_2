@@ -23,50 +23,9 @@ class SolveShortestPath {
     //mestodos de uma ArrayList: boolean isEmpty(), void add(int), void remove()
 	ArrayList<Integer> getShortestPath(int i, int j) {
 		
-		//Algoritmo de Bellman-Ford, assumindo que naoo ha arestas de peso negativo
+		
 		ArrayList<Integer> path = new ArrayList<Integer>();
-		int[] custos = new int[g.getNumeroVertices()];
-		int[] preds = new int[g.getNumeroVertices()];
 
-		for (int k = 0; k < g.getNumeroVertices(); k++) {
-			custos[k] = INFINITY;
-			preds[k] = -1;
-		}
-		
-		custos[i] = 0;
-		
-		for (int k = 0; k < g.getNumeroVertices(); k++) {
-			for (Aresta aresta : g.getVetorArestas()) {
-				if (custos[aresta.origem] + aresta.peso < custos[aresta.destino]) {
-					custos[aresta.destino] = custos[aresta.origem] + aresta.peso;
-					preds[aresta.destino] = aresta.origem;
-				}
-				else if (!g.isOrientado() && custos[aresta.destino] + aresta.peso < custos[aresta.origem]) {
-					custos[aresta.origem] = custos[aresta.destino] + aresta.peso;
-					preds[aresta.origem] = aresta.destino;
-				}
-			}
-		}
-		
-		if (custos[j] == INFINITY)
-			return path;
-		
-		int tamanhoPilha = 0;
-		int[] pilha = new int[g.getNumeroVertices()];
-		int pred = j;
-		
-		while (pred != -1) {
-			pilha[tamanhoPilha++] = pred;
-			pred = preds[pred];
-		}
-		
-		tamanhoPilha--;
-		
-		for (; tamanhoPilha >= 0; tamanhoPilha--) {
-			path.add(pilha[tamanhoPilha]);
-		}
-		
-		path.add(custos[j]);
 		
 		return path;
 	}
@@ -315,11 +274,11 @@ class Heap{
 	}
 	
 	private void climb(int index){
-		while(index/2 > 0){
-			
-			if (nodes[index/2].peso > nodes[index].peso){
-				swap(index/2, index);
-			}
+		while(index/2 > 0 && nodes[index/2].peso > nodes[index].peso){			
+		
+			swap(index/2, index);
+			index=index/2;
+
 		}
 	}
 	
@@ -376,31 +335,40 @@ class Heap{
 		
 		cont--;
 		
-		//System.out.println(nodes[1].valor);
+		
 		
 		int index = 1;
 		
 		if (has_left(index)&& has_right(index)){
 		
 			
+			
 			while( nodes[index].peso > nodes[index*2].peso || nodes[index].peso > nodes[index*2+1].peso)
 			{			
 				int smallestIndex = getSmallestIndex(index);
 				
 				
+				
 				swap(index, smallestIndex);
 				
 				
+				
 				index= smallestIndex;
+		
 				
 				//System.out.println(index);
 			}
+			
+			
+			
 		
 		}
 		else if (has_left(index)){
 			
 			swap(index, 2*index);
 		}
+		
+		
 		
 		return root;
 		
@@ -413,7 +381,7 @@ class Heap{
 	}
 	
 	public void print(){
-		System.out.println(cont);
+		//System.out.println(cont);
 		for (int i = 1; i < cont; i++) {
 			System.out.println(nodes[i].valor+" "+nodes[i].peso);
 		}
@@ -466,15 +434,16 @@ class Dijkstra{
 		
 		while(!nos.isEmpty()){	
 			
-			nos.print();
-		
-			Node currentNode= nos.poll();				
+			Node currentNode= nos.poll();		
+			
+			nos.print();	
 			
 			System.out.println("Current Node " + currentNode.valor);				
 			
-			ListaAresta currentArestas = g.getLista(currentNode.valor);
+			ListaAresta currentArestas = g.getLista(currentNode.valor);			
 			
-			for (int k = 0; k < currentArestas.getTamanho(); k++) {
+			for (int k = 0; k < currentArestas.getTamanho(); k++) {				
+				
 				
 				Aresta a = currentArestas.getAresta(k);	
 				
@@ -493,13 +462,16 @@ class Dijkstra{
 			}
 			
 			vis[currentNode.valor]=true;
+			
+			System.out.println("passou");
 		}
 		
 
 		int cnode = destino;
 		
 		for (int k = 0; k < g.getNumeroVertices(); k++) {
-			System.out.println(k + " " + pred[k]);
+			//System.out.println(k + " " + pred[k]);
+			//System.out.println("aqui");
 		}
 		
 		pred[origem]=-1;
@@ -509,7 +481,8 @@ class Dijkstra{
 		while (pred[cnode] !=-1) {
 	
 			stack.push(cnode);
-			cnode=pred[cnode];		
+			cnode=pred[cnode];	
+			
 		}
 		
 		while (!stack.isEmpty()) {
@@ -729,33 +702,33 @@ public class ShortestPath {
 		g.printLista();
 		
 		//SolveShortestPath ssp = new SolveShortestPath(g);
-		//Dijkstra ssp= new Dijkstra(g);
+		Dijkstra ssp= new Dijkstra(g);
 		//BellmanFord ssp = new BellmanFord(g);
 		
 		//SHORTEST PATH
 		
-//		ArrayList<Integer> path = ssp.getShortestPath(0, 1);
-//		
-//		if(path.size() == 0)
-//			System.out.println("No path");
-//		else {
-//			int custo=0;
-//			int oldNode=0;
-//			
-//			System.out.println("Caminho: ");
-//			
-//			for (int p: path) {
-//				System.out.printf("%d ", p);
-//				
-//				custo+= g.getPeso(oldNode, p);
-//				
-//				oldNode=p;
-//			}
-//			
-//			System.out.println("\nCusto:" + custo);
-//			
-//			System.out.println();
-//		}
+		ArrayList<Integer> path = ssp.getShortestPath(0, 1);
+		
+		if(path.size() == 0)
+			System.out.println("No path");
+		else {
+			int custo=0;
+			int oldNode=0;
+			
+			System.out.println("Caminho: ");
+			
+			for (int p: path) {
+				System.out.printf("%d ", p);
+				
+				custo+= g.getPeso(oldNode, p);
+				
+				oldNode=p;
+			}
+			
+			System.out.println("\nCusto:" + custo);
+			
+			System.out.println();
+		}
 //		
 		//MST
 		
@@ -776,9 +749,9 @@ public class ShortestPath {
 
 		//SEARCH
 		//BFS search = new BFS(g);
-		DFS search= new DFS(g);
-		
-		search.search(0, 1);
+//		DFS search= new DFS(g);
+//		
+//		search.search(0, 1);
 		
 	}
 }
