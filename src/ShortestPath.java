@@ -663,11 +663,69 @@ class BFS{
 	
 }
 
+class DFS{
+	Grafo g;
+	
+	public DFS(Grafo g){
+		this.g=g;
+	}
+	
+	public void search(int origem, int destino){
+		
+		//pilha de nós
+		Stack<Integer> nos = new Stack();
+		
+		//vetor de visitados
+		boolean[] vis= new boolean[g.getNumeroVertices()];
+		
+		
+		//desvisitando tudo
+		for (int i = 0; i < vis.length; i++) {
+			vis[i]=false;
+		}
+		
+		//adcionando origem a pilha
+		nos.push(origem);
+		
+		int currentNode;
+		
+		//enquanto a pilha nao estiver vazia
+		while(!nos.isEmpty()){
+			
+			//pega o topo
+			currentNode=nos.pop();
+			
+			//e suas arestas
+			ListaAresta arestas = g.getLista(currentNode);
+			
+			//adiciona seus destinos nao visitados a pilha
+			for (int i = 0; i < arestas.getTamanho(); i++) {
+				
+				int next_node = arestas.getAresta(i).destino;
+				
+				if(!vis[next_node])
+					nos.push(next_node);
+				
+			}
+			
+			//visita e imprime
+			vis[currentNode]=true;
+			System.out.println(currentNode);
+			
+			//se for o destino, encerra a busca
+			if(currentNode==destino)
+				return;
+		}
+		
+		
+	}
+}
+
 public class ShortestPath {
 
 	public static void main(String[] args) {
 		Grafo g = new Grafo(Grafo.LISTA);
-		g.lerGrafoDeArquivo("grafo1prova.in", false, true);
+		g.lerGrafoDeArquivo("grafo2prova.in", false, true);
 		g.printLista();
 		
 		//SolveShortestPath ssp = new SolveShortestPath(g);
@@ -717,9 +775,10 @@ public class ShortestPath {
 //		System.out.println("cabou");
 
 		//SEARCH
-		BFS bfs = new BFS(g);
+		//BFS search = new BFS(g);
+		DFS search= new DFS(g);
 		
-		bfs.search(0, 1);
+		search.search(0, 1);
 		
 	}
 }
