@@ -6,6 +6,16 @@ import java.util.Stack;
 
 import javax.swing.text.StyledEditorKit.ForegroundAction;
 
+
+
+//Observações:
+
+//Fiz uma classe pra cada algoritmo (Bellman-ford, Dijkstra, BFS, DFS, Prim e Kruskal)
+//Para testa-las, basta comentar ou descomentar no main deste arquivo
+
+
+
+//Código do professor. Não alterei nada.
 class SolveShortestPath {
 	
 	private static final int INFINITY = 99999;
@@ -273,6 +283,7 @@ class Heap{
 		nodes[j]=aux;
 	}
 	
+	//sobre um nó até a devida posicao
 	private void climb(int index){
 		while(index/2 > 0 && nodes[index/2].peso > nodes[index].peso){			
 		
@@ -282,45 +293,53 @@ class Heap{
 		}
 	}
 	
+	//adiciona um nó ao heap
 	public void offer(Node n){
 
-		nodes[cont]= n;
+		nodes[cont]= n;	
 		
-		cont++;
+		climb(cont);
 		
+		cont++;	
 
 	}
 	
+	//pega o menor filho (-1 se nao tiver filhos)
 	private int getSmallestIndex(int index){
 		
+		if (2*index > cont)
+			return -1;
+		if (2*index+1 > cont)
+			return 2*index;
 		if(nodes[2*index+1].peso < nodes[index*2].peso)
 			return 2*index+1;
 		return 2*index;
 		
 	}
 	
-	public void decreaseKey(int key, int newPeso){
-		
+	//diminui uma chave
+	public void decreaseKey(int key, int newPeso){		
 		
 		for (int i = 1; i < cont; i++) {
 			
 			if(key == nodes[i].valor){
 				nodes[i].peso= newPeso;
 				climb(i);
-				//System.out.println(i);
-				//System.out.println(nodes[i].valor);
+
 				return;
 			}
 		}
 		
 	}
 	
+	//se tem filho a esquerda
 	public boolean has_left(int index){
 		if (2*index <= cont)
 			return true;
 		return false;
 	}
 	
+	//se tem filho a direita
 	public boolean has_right(int index){
 		if (2*index+1 <= cont)
 			return true;
@@ -329,27 +348,25 @@ class Heap{
 	
 	public void heapfy(int index){		
 		
-		if (has_left(index)&& has_right(index)){			
+		
+		if(has_left(index) || has_right(index)){
 			
-			while( nodes[index].peso > nodes[index*2].peso || nodes[index].peso > nodes[index*2+1].peso)
-			{			
-				int smallestIndex = getSmallestIndex(index);				
+			int smallest_son= getSmallestIndex(index);
 			
-				swap(index, smallestIndex);				
-				
-				index= smallestIndex;	
-				
-				//System.out.println(index);
-			}			
+			if (smallest_son ==-1)
+				return;
+			
+			swap(index, smallest_son);
+			
+			heapfy(smallest_son);
 			
 		}
-		else if (has_left(index) && nodes[index*2].peso > nodes[index].peso){
-			
-			System.out.println("quebrou");
-			swap(index, 2*index);
-		}
+		
+		
 	}
 	
+	
+	//extract min
 	public Node poll(){
 		
 		Node root = nodes[1];				
@@ -370,8 +387,9 @@ class Heap{
 		return false;
 	}
 	
+	//impresao padrao, sem ordem
 	public void print(){
-		//System.out.println(cont);
+		
 		for (int i = 1; i < cont; i++) {
 			System.out.println(nodes[i].valor+" "+nodes[i].peso);
 		}
@@ -380,7 +398,6 @@ class Heap{
 	
 }
 
-//nao funciona direito...
 class Dijkstra{
 	
 	Grafo g;
@@ -396,76 +413,85 @@ class Dijkstra{
 		int destino = j;
 		int origem = i;
 	
+		//caminho
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		
+		//fila de areastas
 		PriorityQueue<Aresta> arestas = new PriorityQueue<>();
 		
+		//lista de visitados
 		boolean vis[] = new boolean[g.getNumeroVertices()];
 		
+		//lista de predecessores
 		int pred[]= new int[g.getNumeroVertices()];
 		
+		//lista de distancias
 		int dis[]=new int[g.getNumeroVertices()];
 		
+		//heap de nós
 		Heap nos = new Heap();
 		
 		for (int k = 0; k < g.getNumeroVertices(); k++) {					
 
+			//cria um nó pra cada vértice
 			Node no = new Node(k, MAX);
 			
+			//seta seu peso pra 0 se for a origem
 			if(k==i)
 				no.peso=0;
 			
+			//adiciona no heap
 			nos.offer(no);
 
+			//marca como nao visitado, seta peso e predecessor
 			vis[k]= false;
 			pred[k]=-1;
 			dis[k]=MAX;
 		}		
 		
+		//enquanto houverem nós
 		while(!nos.isEmpty()){	
 			
-			Node currentNode= nos.poll();		
+			//pega o nó de menor custo			
+			Node currentNode= nos.poll();					
 			
-			nos.print();	
-			
-			System.out.println("Current Node " + currentNode.valor);				
-			
+			//pega as arestas daquele nó
 			ListaAresta currentArestas = g.getLista(currentNode.valor);			
 			
-			for (int k = 0; k < currentArestas.getTamanho(); k++) {				
-				
+			for (int k = 0; k < currentArestas.getTamanho(); k++) {						
 				
 				Aresta a = currentArestas.getAresta(k);	
 				
+				//se é possível relaxar para aquele destino (e o destino ja nao foi visitado)
 				if (!vis[a.destino] && (a.peso + currentNode.peso < dis[a.destino])) {
 					
 					int newPeso = a.peso + currentNode.peso;
 					
+					//diminui o peso
 					nos.decreaseKey(a.destino, newPeso);
 					
 					dis[a.destino]= newPeso;
 					
+					//seta o predecessor pro valor atual
 					pred[a.destino]= currentNode.valor;	
 					
 				}
 				
 			}
 			
+			//marca como visitado
 			vis[currentNode.valor]=true;
-			
-			System.out.println("passou");
+		
 		}
 		
 
-		int cnode = destino;
 		
-		for (int k = 0; k < g.getNumeroVertices(); k++) {
-			//System.out.println(k + " " + pred[k]);
-			//System.out.println("aqui");
-		}
+		int cnode = destino;
 		
 		pred[origem]=-1;
 		
+		
+		//jogando no path
 		Stack<Integer> stack = new Stack<>();
 		
 		while (pred[cnode] !=-1) {
@@ -474,6 +500,9 @@ class Dijkstra{
 			cnode=pred[cnode];	
 			
 		}
+		
+		if(!stack.isEmpty())
+			stack.push(origem);
 		
 		while (!stack.isEmpty()) {
 			path.add(stack.pop());
@@ -688,14 +717,18 @@ public class ShortestPath {
 
 	public static void main(String[] args) {
 		Grafo g = new Grafo(Grafo.LISTA);
-		g.lerGrafoDeArquivo("grafo2prova.in", false, true);
+		g.lerGrafoDeArquivo("grafo1prova.in", false, true);
 		g.printLista();
 		
-		//SolveShortestPath ssp = new SolveShortestPath(g);
-		Dijkstra ssp= new Dijkstra(g);
-		//BellmanFord ssp = new BellmanFord(g);
+		//SHORTEST PATH--------------------------------------------------
 		
-		//SHORTEST PATH
+		//SolveShortestPath ssp = new SolveShortestPath(g);
+		
+		//DIJKSTRA
+		Dijkstra ssp= new Dijkstra(g);
+		
+		//BELLMAN FORD
+		//BellmanFord ssp = new BellmanFord(g);
 		
 		ArrayList<Integer> path = ssp.getShortestPath(0, 1);
 		
@@ -719,13 +752,14 @@ public class ShortestPath {
 			
 			System.out.println();
 		}
-//		
-		//MST
 		
+//		//ÁRVORE GERADORA MÍNIMA-----------------------------------
+		
+//		//KRUSKAL
 //		Kruskal kruskal = new Kruskal(g);
 //		//ArrayList<Aresta> tree = kruskal.solveMST();
 //		
-//		
+//		//PRIM
 //		Prim prim = new Prim(g);
 //		ArrayList<Aresta> tree = prim.solveMST();
 //		
@@ -737,8 +771,14 @@ public class ShortestPath {
 //		}
 //		System.out.println("cabou");
 
-		//SEARCH
+		
+//		//BUSCAS--------------------------------------------------
+		
+//		//BFS		
 		//BFS search = new BFS(g);
+		
+		
+//		//DFS		
 //		DFS search= new DFS(g);
 //		
 //		search.search(0, 1);
