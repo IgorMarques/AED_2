@@ -614,23 +614,30 @@ class BFS{
 	
 	public void search(int origem, int destino){
 		
+		//fila de nós
 		LinkedList<Integer> nos = new LinkedList<>();
 		
 		nos.add(origem);
 		
 		int currentNode;
 		
+		//lista de visitados
 		boolean vis[] = new boolean[g.getNumeroVertices()];
 
+		//marcando todos como falso
 		for (int i = 0; i < vis.length; i++) {
 			vis[i]=false;
 		}
 		
-		do{
+		//enquanto nao acha o destino
+		while(!nos.isEmpty()){
+			//pega o primeiro nó da fila
 			currentNode= nos.poll();
-			
+		
+			//e suas arestas
 			ListaAresta arestas = g.getLista(currentNode);
 					
+			//adiciona cada uma dos nós adjacentes nao visitados na fila
 			for(int k=0; k< arestas.getTamanho(); k++){
 				
 				int next_node= arestas.getAresta(k).destino;
@@ -640,13 +647,20 @@ class BFS{
 				
 			}
 			
+			//o imprime e marca como visitado
 			System.out.println(currentNode);
 			vis[currentNode]=true;
 
+			//se for o destino,sai do laço
+			if (currentNode == destino)
+				return;
 			
-		}while (currentNode != destino);
-		
+		}
+	
 	}
+	
+	//metodo pode retornar uma lista de nós com as devidas modificacoes
+	
 }
 
 public class ShortestPath {
