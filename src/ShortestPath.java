@@ -72,17 +72,10 @@ class DisjointSet{
 	}
 	
 	public void union(DisjointSet other){
+		DisjointSet a = this.findset();
+		DisjointSet b = other.findset();
 		
-		if (this.getOrder() == other.getOrder()){
-			other.setRepresentative(this.findset());
-			this.setOrder(this.order++);
-		}
-		else if (this.getOrder() < other.getOrder()){
-			this.setRepresentative(other.findset());
-		}
-		else{
-			other.setRepresentative(this.findset());
-		}
+		a.setRepresentative(b);
 			
 	}
 }
@@ -123,9 +116,10 @@ class Kruskal{
 			nos[i]= new DisjointSet(i);
 		}
 		
+		int cont =0;
 		
 		//executando o algoritmo propriamente dito
-		for (int i = 0; i < g.getNumeroVertices()-1; i++) {
+		while(!arestas.isEmpty()){
 			
 			//menor aresta
 			Aresta a= arestas.poll();
@@ -135,6 +129,8 @@ class Kruskal{
 		
 			//se ela conecta duas árvores distintas
 			if(origem.findset() != destino.findset()){	
+	
+				System.out.println(cont++);
 				
 				//adiciona na lista de arestas e no grafo
 				mst_arestas.add(a);
@@ -142,11 +138,11 @@ class Kruskal{
 				tree.adicionarAresta(a.origem, a.destino, a.peso);
 				
 				//caso especial do mesmo nao ser orientado
-				if (!g.isOrientado()){
-					tree.adicionarAresta(a.destino, a.origem, a.peso);
-					Aresta b = new Aresta(a.destino, a.origem, a.peso);
-					mst_arestas.add(b);
-				}
+//				if (g.isOrientado()){
+//					tree.adicionarAresta(a.destino, a.origem, a.peso);
+//					Aresta b = new Aresta(a.destino, a.origem, a.peso);
+//					mst_arestas.add(b);
+//				}
 				
 				origem.union(destino);
 			}
@@ -228,7 +224,7 @@ class Prim{
 				mst_arestas.add(a);
 				
 				//para os casos de grafo nao orientado
-				if (!g.isOrientado()){
+				if (g.isOrientado()){
 					tree.adicionarAresta(a.destino, a.origem, a.peso);
 					Aresta b = new Aresta(a.destino, a.origem, a.peso);
 					mst_arestas.add(b);
@@ -717,7 +713,7 @@ public class ShortestPath {
 
 	public static void main(String[] args) {
 		Grafo g = new Grafo(Grafo.LISTA);
-		g.lerGrafoDeArquivo("grafo1prova.in", false, true);
+		g.lerGrafoDeArquivo("grafo3prova.in", false, true);
 		g.printLista();
 		
 		//SHORTEST PATH--------------------------------------------------
@@ -725,18 +721,21 @@ public class ShortestPath {
 		//SolveShortestPath ssp = new SolveShortestPath(g);
 		
 		//DIJKSTRA
-		Dijkstra ssp= new Dijkstra(g);
+//		Dijkstra ssp= new Dijkstra(g);
+//		
+//		//BELLMAN FORD
+		BellmanFord ssp = new BellmanFord(g);
 		
-		//BELLMAN FORD
-		//BellmanFord ssp = new BellmanFord(g);
-		
-		ArrayList<Integer> path = ssp.getShortestPath(0, 1);
-		
+		int origem = 29;
+		int destino= 6;
+//		
+		ArrayList<Integer> path = ssp.getShortestPath(origem, destino);
+//		
 		if(path.size() == 0)
 			System.out.println("No path");
 		else {
 			int custo=0;
-			int oldNode=0;
+			int oldNode=origem;
 			
 			System.out.println("Caminho: ");
 			
@@ -757,19 +756,22 @@ public class ShortestPath {
 		
 //		//KRUSKAL
 //		Kruskal kruskal = new Kruskal(g);
-//		//ArrayList<Aresta> tree = kruskal.solveMST();
-//		
-//		//PRIM
-//		Prim prim = new Prim(g);
-//		ArrayList<Aresta> tree = prim.solveMST();
+//		ArrayList<Aresta> tree = kruskal.solveMST();
+////		
+////		//PRIM
+////		Prim prim = new Prim(g);
+////		ArrayList<Aresta> tree = prim.solveMST();
+////		
+//		int cont = 0;
 //		
 //		for(Aresta a: tree){
-//			System.out.println(a.origem);
-//			System.out.println(a.destino);
-//			System.out.println(a.peso);
-//			System.out.println("--");
+////			System.out.println(a.origem);
+////			System.out.println(a.destino);
+////			System.out.println(a.peso);
+////			System.out.println("--");
+//			cont +=a.peso;
 //		}
-//		System.out.println("cabou");
+//		System.out.println(cont);
 
 		
 //		//BUSCAS--------------------------------------------------
